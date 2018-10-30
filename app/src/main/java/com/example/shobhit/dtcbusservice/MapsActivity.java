@@ -41,9 +41,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.DoubleUnaryOperator;
-
-import javax.net.ssl.HttpsURLConnection;
+import java.util.Scanner;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -53,6 +51,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private EditText init_location, terminate_location;
     private LatLng origin_latlng, dest_latlng;
     String MY_API_KEY = "AIzaSyBa2vPbi7jEr7kuKuAiVr78-oP9jyfJtaA";
+    private boolean check = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,9 +81,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
                         String strlocality = addresses.get(0).getLocality() + ", ";
                         String strcountry = addresses.get(0).getCountryName();
-                        mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource
-                                (R.drawable.curr_location)).position(latlng).title(strlocality + strcountry));
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15f));
+                        if (check == false){
+                            mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource
+                                    (R.drawable.curr_location)).position(latlng).title(strlocality + strcountry));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 12f));
+                            check = true;
+
+                        }
+
 
 
                     } catch (IOException e) {
@@ -150,6 +155,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         init();
         terminate();
 
+
+    }
+
+    private void locate() {
+        Scanner Scan = new Scanner(getResources().openRawResource(R.raw.route73));
+        while(Scan.hasNextLine()){
+            String Line = Scan.nextLine();
+            String[] parts = Line.split(":");
+            String[] lat_lng = parts[1].split(",");
+            Log.e(lat_lng[0].trim(), lat_lng[1].trim());
+            LatLng latLng = new LatLng(Double.parseDouble(lat_lng[0].trim()), Double.parseDouble(lat_lng[1].trim()));
+            mMap.addMarker(new MarkerOptions().position(latLng).title(parts[0]));
+
+        }
 
 
     }
@@ -276,8 +295,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-
-
+        locate();
     }
     @Override
     public void onRequestPermissionsResult(int requestCode,
