@@ -1,6 +1,7 @@
 package com.example.shobhit.dtcbusservice;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
@@ -14,7 +15,9 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,8 +53,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int LOCATION_REQUEST = 1234;
     private EditText init_location, terminate_location;
     private LatLng origin_latlng, dest_latlng;
-    String MY_API_KEY = "AIzaSyBa2vPbi7jEr7kuKuAiVr78-oP9jyfJtaA";
+    String MY_API_KEY = "AIzaSyCUDyOqzhN4ig5poW4GhizcfHWcVYJAzwk";
+
     private boolean check = false;
+
 
 
     @Override
@@ -64,6 +69,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         init_location = (EditText) findViewById(R.id.init_location);
         terminate_location = (EditText) findViewById(R.id.terminate_location);
+
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -152,11 +158,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             });
         }
-        init();
-        terminate();
+
 
 
     }
+
 
     private void locate() {
         Scanner Scan = new Scanner(getResources().openRawResource(R.raw.route73));
@@ -255,10 +261,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.e("Location", dest_latlng.toString() + origin_latlng.toString());
                     pathfinder();
                     Log.e("dfds", dest_latlng.toString());
+                    fareprice_check();
                 }
                 return false;
             }
         });
+    }
+
+    private void fareprice_check() {
+        Button fareprice_button = (Button) findViewById(R.id.fareprice);
+        fareprice_button.setVisibility(View.VISIBLE);
+        fareprice_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(v.getContext(), fareprice.class));
+            }
+        });
+
     }
 
     private LatLng geolocate(String search_text){
@@ -296,6 +315,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         locate();
+        init();
+        terminate();
+
     }
     @Override
     public void onRequestPermissionsResult(int requestCode,

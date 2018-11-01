@@ -13,6 +13,21 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Fare Check"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="20dp"
+            android:visibility="invisible"
+            android:id="@+id/fareprice"
+            />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
@@ -40,6 +55,8 @@
             android:background="@null"
             android:hint="Enter boarding point"
             android:imeOptions="actionSearch"/>
+
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -72,6 +89,8 @@
             android:hint="Enter dropping point"
             android:imeOptions="actionSearch"/>
     </RelativeLayout>
+
+
 
 </RelativeLayout>
 
