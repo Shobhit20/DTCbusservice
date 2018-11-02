@@ -56,6 +56,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String MY_API_KEY = "AIzaSyCUDyOqzhN4ig5poW4GhizcfHWcVYJAzwk";
 
     private boolean check = false;
+    ArrayList<String> list = new ArrayList<String>();
 
 
 
@@ -173,6 +174,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.e(lat_lng[0].trim(), lat_lng[1].trim());
             LatLng latLng = new LatLng(Double.parseDouble(lat_lng[0].trim()), Double.parseDouble(lat_lng[1].trim()));
             mMap.addMarker(new MarkerOptions().position(latLng).title(parts[0]));
+            list.add(parts[0]);
 
         }
 
@@ -274,9 +276,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fareprice_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(v.getContext(), fareprice.class));
+                Intent intent = new Intent(v.getContext(), fareprice.class);
+                intent.putExtra("map", list);
+                startActivity(intent);
+
             }
         });
+
 
     }
 
