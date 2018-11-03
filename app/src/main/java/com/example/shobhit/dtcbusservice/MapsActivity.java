@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -40,10 +43,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -53,14 +59,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     LocationManager locationManager;
     private static final int LOCATION_REQUEST = 1234;
-    private EditText init_location, terminate_location;
+    private AutoCompleteTextView init_location, terminate_location;
     private LatLng origin_latlng, dest_latlng;
     String MY_API_KEY = "AIzaSyCUDyOqzhN4ig5poW4GhizcfHWcVYJAzwk";
     String start_location, end_location;
+    int index_init_location, index_end_location;
 
     private boolean check = false;
+    private boolean init_bool = false;
     ArrayList<String> list = new ArrayList<String>();
-
+    ArrayList<LatLng> lat_lng_route = new ArrayList<>();
 
 
     @Override
@@ -71,8 +79,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        init_location = (EditText) findViewById(R.id.init_location);
-        terminate_location = (EditText) findViewById(R.id.terminate_location);
+        init_location = (AutoCompleteTextView) findViewById(R.id.init_location);
+        terminate_location = (AutoCompleteTextView) findViewById(R.id.terminate_location);
 
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -176,10 +184,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             String[] lat_lng = parts[1].split(",");
             Log.e(lat_lng[0].trim(), lat_lng[1].trim());
             LatLng latLng = new LatLng(Double.parseDouble(lat_lng[0].trim()), Double.parseDouble(lat_lng[1].trim()));
-            mMap.addMarker(new MarkerOptions().position(latLng).title(parts[0]));
+            lat_lng_route.add(latLng);
             list.add(parts[0]);
 
         }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
+        init_location.setAdapter(adapter);
+
 
     }
 
@@ -244,9 +255,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         || actionId == EditorInfo.IME_ACTION_DONE
                         || event.getAction()==KeyEvent.ACTION_DOWN
                         || event.getAction() == KeyEvent.KEYCODE_ENTER){
+
                     String init_text = init_location.getText().toString();
+                    for (int i=0;i<list.size();i++) {
+                        if (list.get(i).equals(init_text)) {
+                            index_init_location = i;
+                            break;
+                        }
+                    }
+                    Log.e("Array", String.valueOf(index_init_location));
+
                     start_location = init_text;
                     origin_latlng = geolocate(init_text);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
+                            android.R.layout.simple_list_item_1, list.subList(index_init_location, list.size()));
+
+                    terminate_location.setAdapter(adapter);
+                    init_bool = true;
                 }
                 return false;
             }
@@ -254,6 +279,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void terminate(){
+
         terminate_location.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -266,12 +292,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     dest_latlng = geolocate(terminate_text);
                     Log.e("Location", dest_latlng.toString() + origin_latlng.toString());
                     pathfinder();
+                    for (int i=0;i<list.size();i++) {
+                        if (list.get(i).equals(end_location)) {
+                            index_end_location = i;
+                            break;
+                        }
+                    }
                     Log.e("dfds", dest_latlng.toString());
                     fareprice_check();
+                    plot_intermediate();
+
                 }
                 return false;
             }
         });
+    }
+
+    private void plot_intermediate() {
+        for(int i=index_init_location +1; i < index_end_location; i++){
+            mMap.addMarker(new MarkerOptions().position(lat_lng_route.get(i)).title(list.get(i)));
+        }
     }
 
     private void fareprice_check() {
@@ -291,8 +331,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), fareprice.class);
                 intent.putExtra("map", list);
-                intent.putExtra("start", start_location);
-                intent.putExtra("end", end_location);
+                intent.putExtra("start", index_init_location);
+                intent.putExtra("end", index_end_location);
                 startActivity(intent);
 
             }
@@ -300,23 +340,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private LatLng geolocate(String search_text){
-
-        Geocoder geocoder = new Geocoder(MapsActivity.this);
-        List<Address> list_addresses = new ArrayList<>();
-        try {
-            list_addresses = geocoder.getFromLocationName(search_text, 1);
-
-
-        }catch (IOException e){
-            Log.e("Exception", "Error in fetching");
+        int i;
+        for (i=0;i<list.size();i++) {
+            if (list.get(i).equals(search_text)) {
+                break;
+            }
         }
-        Address address = list_addresses.get(0);
+        if(init_bool != true){
+            mMap.addMarker(new MarkerOptions().position(lat_lng_route.get(i)).title("Boarding - " +start_location ));
+        }
+        else{
+            mMap.addMarker(new MarkerOptions().position(lat_lng_route.get(i)).title("Dropping - " +end_location ));
+        }
 
-        LatLng latlng_init = new LatLng(address.getLatitude(), address.getLongitude() );
-        mMap.addMarker(new MarkerOptions().position(latlng_init).title("Start"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng_init, 15f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lat_lng_route.get(i), 12f));
 
-        return latlng_init;
+        return lat_lng_route.get(i);
     }
 
 
@@ -336,6 +375,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locate();
         init();
         terminate();
+
 
     }
     @Override

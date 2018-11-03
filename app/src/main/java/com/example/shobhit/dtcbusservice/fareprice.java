@@ -22,7 +22,9 @@ public class fareprice extends AppCompatActivity {
         setContentView(R.layout.activity_fareprice);
         ListView lst = (ListView) findViewById(R.id.listvw);
         fare_places = (ArrayList<String>) getIntent().getSerializableExtra("map");
-        ArrayAdapter<String> arrayadapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, fare_places);
+        int start_index = (Integer) getIntent().getSerializableExtra("start");
+        int end_index = (Integer) getIntent().getSerializableExtra("end");
+        ArrayAdapter<String> arrayadapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, fare_places.subList(start_index, end_index+1));
         lst.setAdapter(arrayadapter);
         lst.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
