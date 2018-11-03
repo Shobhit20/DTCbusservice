@@ -344,7 +344,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MapsActivity.this, qrcode_scanner.class));
+                startActivityForResult(new Intent(MapsActivity.this, qrcode_scanner.class), 73);
             }
         });
 
@@ -361,6 +361,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 73){
+            if (resultCode == RESULT_OK){
+                boolean result = data.getBooleanExtra("paid", false);
+                Log.e("The value is", String.valueOf(result));
+                if(result){
+                    Button fare = (Button) findViewById(R.id.fare);
+                    fare.setText("Paid 20 Rs");
+                    fare.setEnabled(false);
+                }
+            }
+        }
     }
 
     private LatLng geolocate(String search_text){

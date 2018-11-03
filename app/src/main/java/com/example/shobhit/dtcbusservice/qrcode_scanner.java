@@ -100,8 +100,10 @@ public class qrcode_scanner extends Activity
 
                 ImageView imgview = (ImageView) findViewById(R.id.paid);
                 imgview.setVisibility(View.VISIBLE);
-                imgview.animate().alpha(0f).setDuration(20000);
-
+                imgview.animate().alpha(0f).setDuration(2000);
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("paid", true);
+                setResult(RESULT_OK, resultIntent);
                 finish();
 
             }
