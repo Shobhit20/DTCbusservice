@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -54,6 +56,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private EditText init_location, terminate_location;
     private LatLng origin_latlng, dest_latlng;
     String MY_API_KEY = "AIzaSyCUDyOqzhN4ig5poW4GhizcfHWcVYJAzwk";
+    String start_location, end_location;
 
     private boolean check = false;
     ArrayList<String> list = new ArrayList<String>();
@@ -178,7 +181,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
 
-
     }
 
     private void pathfinder() {
@@ -243,6 +245,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         || event.getAction()==KeyEvent.ACTION_DOWN
                         || event.getAction() == KeyEvent.KEYCODE_ENTER){
                     String init_text = init_location.getText().toString();
+                    start_location = init_text;
                     origin_latlng = geolocate(init_text);
                 }
                 return false;
@@ -259,6 +262,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         || event.getAction()==KeyEvent.ACTION_DOWN
                         || event.getAction() == KeyEvent.KEYCODE_ENTER){
                     String terminate_text = terminate_location.getText().toString();
+                    end_location = terminate_text;
                     dest_latlng = geolocate(terminate_text);
                     Log.e("Location", dest_latlng.toString() + origin_latlng.toString());
                     pathfinder();
@@ -271,19 +275,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void fareprice_check() {
-        Button fareprice_button = (Button) findViewById(R.id.fareprice);
-        fareprice_button.setVisibility(View.VISIBLE);
-        fareprice_button.setOnClickListener(new View.OnClickListener() {
+        RelativeLayout details = (RelativeLayout) findViewById(R.id.details);
+        details.setVisibility(View.VISIBLE);
+        TextView start_id = (TextView) findViewById(R.id.start);
+        TextView end_id = (TextView) findViewById(R.id.end);
+        TextView fare = (TextView) findViewById(R.id.fare);
+        start_id.setText("Start\n" + start_location);
+        end_id.setText("End\n" + end_location);
+        fare.setText("Fare - X rs");
+
+
+        Button farechart = (Button) findViewById(R.id.checkfare);
+        farechart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), fareprice.class);
                 intent.putExtra("map", list);
+                intent.putExtra("start", start_location);
+                intent.putExtra("end", end_location);
                 startActivity(intent);
 
             }
         });
-
-
     }
 
     private LatLng geolocate(String search_text){

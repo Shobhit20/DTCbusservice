@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
 
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/map"
@@ -11,20 +12,83 @@
         android:layout_height="match_parent"
         tools:context=".MapsActivity" />
 
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:id="@+id/details"
+        android:visibility="invisible">
 
-            android:text="Fare Check"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="20dp"
-            android:visibility="invisible"
-            android:id="@+id/fareprice"
-            />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="380dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:id="@+id/start"
+                    android:layout_height="wrap_content"
+
+                    android:layout_weight="50"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="20dp"
+                    android:background="#FFFFFF"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+
+                    android:text=""
+                    android:textAlignment="center"
+                    />
+
+                <TextView
+                    android:id="@+id/end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="50"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="20dp"
+                    android:background="#FFFFFF"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text=""
+                    android:textAlignment="center" />
+            </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="450dp">
+
+            <TextView
+                android:id="@+id/fare"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:text="TextView"
+                android:paddingBottom="20dp"
+                android:background="#FFFFFF"
+                android:textAlignment="center"
+                android:paddingTop="20dp"/>
+
+            <Button
+                android:id="@+id/checkfare"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+
+
+                android:text="Open Fare Chart" />
+
+        </LinearLayout>
+
+
+
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
@@ -44,17 +108,21 @@
             android:layout_marginLeft="10dp"
             android:src="@drawable/ic_magnify"
             />
+
         <EditText
+            android:id="@+id/init_location"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toRightOf="@id/ic_magnify"
-            android:layout_centerVertical="true"
-            android:textSize="15sp"
-            android:textColor="#000"
-            android:id="@+id/init_location"
+
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
             android:background="@null"
             android:hint="Enter boarding point"
-            android:imeOptions="actionSearch"/>
+            android:imeOptions="actionSearch"
+            android:textColor="#000"
+            android:textSize="15sp" />
+
 
 
     </RelativeLayout>

@@ -2,6 +2,7 @@ package com.example.shobhit.dtcbusservice;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,9 +28,11 @@ public class fareprice extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView tv= (TextView) view;
-                Toast.makeText(fareprice.this, tv.getText()+"  "+position,Toast.LENGTH_LONG).show();
+                Toast.makeText(fareprice.this, "The fare price is X",Toast.LENGTH_LONG).show();
+
             }
         });
+
 
     }
 
