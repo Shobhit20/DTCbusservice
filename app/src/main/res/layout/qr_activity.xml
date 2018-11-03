@@ -20,6 +20,14 @@
         android:id="@+id/code_info"
         android:layout_above="@+id/button_1"
         android:layout_marginBottom="10dp"/>
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/paytm_paid"
+        android:visibility="invisible"
+        android:id="@+id/paid"
+        android:layout_centerInParent="true"
+        />
 
     <Button
         android:layout_width="wrap_content"

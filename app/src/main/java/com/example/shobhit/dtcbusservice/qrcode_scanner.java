@@ -10,6 +10,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -97,8 +98,11 @@ public class qrcode_scanner extends Activity
             public void onClick(View v)
             {
 
-                    finish();
+                ImageView imgview = (ImageView) findViewById(R.id.paid);
+                imgview.setVisibility(View.VISIBLE);
+                imgview.animate().alpha(0f).setDuration(20000);
 
+                finish();
 
             }
         }));
