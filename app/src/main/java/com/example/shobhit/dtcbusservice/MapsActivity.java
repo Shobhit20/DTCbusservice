@@ -69,7 +69,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean init_bool = false;
     ArrayList<String> list = new ArrayList<String>();
     ArrayList<LatLng> lat_lng_route = new ArrayList<>();
-
+    int search_init = 0;
+    int search_terminal = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -255,7 +256,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         || actionId == EditorInfo.IME_ACTION_DONE
                         || event.getAction()==KeyEvent.ACTION_DOWN
                         || event.getAction() == KeyEvent.KEYCODE_ENTER){
-
+                    if (search_init > 0){
+                        mMap.clear();
+                        init_bool =false;
+                    }
                     String init_text = init_location.getText().toString();
                     for (int i=0;i<list.size();i++) {
                         if (list.get(i).equals(init_text)) {
@@ -272,6 +276,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     terminate_location.setAdapter(adapter);
                     init_bool = true;
+                    search_init ++;
                 }
                 return false;
             }
@@ -287,6 +292,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         || actionId == EditorInfo.IME_ACTION_DONE
                         || event.getAction()==KeyEvent.ACTION_DOWN
                         || event.getAction() == KeyEvent.KEYCODE_ENTER){
+                    if (search_init > 0){
+                        mMap.clear();
+                    }
                     String terminate_text = terminate_location.getText().toString();
                     end_location = terminate_text;
                     dest_latlng = geolocate(terminate_text);
@@ -301,6 +309,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.e("dfds", dest_latlng.toString());
                     fareprice_check();
                     plot_intermediate();
+                    search_terminal++;
 
                 }
                 return false;
@@ -309,7 +318,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void plot_intermediate() {
-        for(int i=index_init_location +1; i < index_end_location; i++){
+        for(int i=index_init_location; i < index_end_location; i++){
             mMap.addMarker(new MarkerOptions().position(lat_lng_route.get(i)).title(list.get(i)));
         }
     }
@@ -319,10 +328,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         details.setVisibility(View.VISIBLE);
         TextView start_id = (TextView) findViewById(R.id.start);
         TextView end_id = (TextView) findViewById(R.id.end);
-        TextView fare = (TextView) findViewById(R.id.fare);
+        Button fare = (Button) findViewById(R.id.fare);
         start_id.setText("Start\n" + start_location);
         end_id.setText("End\n" + end_location);
-        fare.setText("Fare - X rs");
+        int diff = index_end_location - index_init_location;
+        if(diff <= 10){
+            fare.setText("Fare is 5 Rs");
+        }else if(diff > 10 && diff<=20){
+            fare.setText("Fare is 10 Rs");
+        }else if(diff > 20 && diff<=30){
+            fare.setText("Fare is 15 Rs");
+        }else{
+            fare.setText("Fare is 20 Rs");
+        }
+        fare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapsActivity.this, qrcode_scanner.class));
+            }
+        });
 
 
         Button farechart = (Button) findViewById(R.id.checkfare);

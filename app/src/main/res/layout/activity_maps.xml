@@ -64,7 +64,7 @@
             android:orientation="vertical"
             android:layout_marginTop="450dp">
 
-            <TextView
+            <Button
                 android:id="@+id/fare"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
