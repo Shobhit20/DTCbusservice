@@ -43,6 +43,7 @@
         </activity>
         <activity android:name=".fareprice"></activity>
         <activity android:name=".qrcode_scanner"></activity>
+        <activity android:name=".livetracking"></activity>
     </application>
 
 </manifest>

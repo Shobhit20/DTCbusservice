@@ -10,7 +10,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,27 +30,26 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -71,6 +68,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ArrayList<LatLng> lat_lng_route = new ArrayList<>();
     int search_init = 0;
     int search_terminal = 0;
+    int track_token;
+    Marker moving_marker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -374,10 +373,74 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Button fare = (Button) findViewById(R.id.fare);
                     fare.setText("Paid 20 Rs");
                     fare.setEnabled(false);
+                    TextView start_id = (TextView) findViewById(R.id.start);
+                    TextView end_id = (TextView) findViewById(R.id.end);
+                    start_id.setVisibility(View.INVISIBLE);
+                    end_id.setVisibility(View.INVISIBLE);
+                    Button farechart = (Button) findViewById(R.id.checkfare);
+                    farechart.setText("Live Tracking");
+                    mMap.clear();
+                    track_token = index_init_location;
+                    mMap.addMarker(new MarkerOptions().position(lat_lng_route.get(index_init_location)).title("Boarding - "+list.get(index_init_location)));
+
+                    mMap.addMarker(new MarkerOptions().position(lat_lng_route.get(index_end_location)).title("Dropping - " + list.get(index_end_location)));
+
+                    final Timer timer = new Timer("MyTimer");//create a new Timer
+                    TimerTask timerTask = new TimerTask() {
+
+                        @Override
+                        public void run() {
+                            if (track_token < index_end_location){
+                                track();
+                            }
+                            else{
+                                finish();
+                                overridePendingTransition(0, 0);
+                                startActivity(getIntent());
+                                overridePendingTransition(0, 0);
+                                timer.cancel();
+                                timer.purge();
+                            }
+
+
+                        }
+                    };
+
+
+
+
+                    timer.scheduleAtFixedRate(timerTask, 5000, 5000);
+
+
+                    farechart.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            startActivity(new Intent(v.getContext(), livetracking.class));
+                        }
+                    });
+
                 }
             }
         }
     }
+
+    private void track() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Your code to run in GUI thread here
+                track_token++;
+                if(track_token > index_init_location + 1){
+                    moving_marker.remove();
+                }
+                moving_marker = mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource
+                        (R.drawable.bus_show)).position(lat_lng_route.get(track_token)).title("Curr - "+list.get(track_token)));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lat_lng_route.get(track_token), 12f));
+                Toast.makeText(getApplicationContext(), "Reached " +list.get(track_token), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
 
     private LatLng geolocate(String search_text){
         int i;
@@ -500,7 +563,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
             else {
-                Toast.makeText(getApplicationContext(), "Direction not found", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Direction not found", Toast.LENGTH_SHORT).show();
 
             }
         }
