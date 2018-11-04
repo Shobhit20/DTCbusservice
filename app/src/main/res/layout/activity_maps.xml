@@ -19,6 +19,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:id="@+id/details"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:visibility="invisible">
 
 
@@ -26,7 +28,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="380dp"
+                android:layout_marginTop="360dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -35,8 +37,8 @@
                     android:layout_height="wrap_content"
 
                     android:layout_weight="50"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="20dp"
+                    android:paddingTop="30dp"
+                    android:paddingBottom="30dp"
                     android:background="#FFFFFF"
                     android:ellipsize="end"
                     android:maxLines="2"
@@ -50,8 +52,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="50"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="20dp"
+                    android:paddingTop="30dp"
+                    android:paddingBottom="30dp"
                     android:background="#FFFFFF"
                     android:ellipsize="end"
                     android:maxLines="2"

@@ -24,7 +24,12 @@ public class fareprice extends AppCompatActivity {
         fare_places = (ArrayList<String>) getIntent().getSerializableExtra("map");
         int start_index = (Integer) getIntent().getSerializableExtra("start");
         int end_index = (Integer) getIntent().getSerializableExtra("end");
-        ArrayAdapter<String> arrayadapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, fare_places.subList(start_index, end_index+1));
+        fare_places =  new ArrayList<String>(fare_places.subList(start_index, end_index+1));
+        ArrayList<String> final_places = new ArrayList<String>();
+        for (int i=1; i < fare_places.size(); i++){
+            final_places.add("\n" + fare_places.get(0) +"\n\n"+fare_places.get(i)+"\n");
+        }
+        ArrayAdapter<String> arrayadapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, final_places);
         lst.setAdapter(arrayadapter);
         lst.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
