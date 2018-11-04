@@ -419,7 +419,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     farechart.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            startActivity(new Intent(v.getContext(), livetracking.class));
+                            Intent intent = new Intent(v.getContext(), livetracking.class);
+                            intent.putExtra("map", list);
+                            intent.putExtra("start", track_token);
+                            intent.putExtra("end", index_end_location);
+                            startActivity(intent);
                         }
                     });
 
