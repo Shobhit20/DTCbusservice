@@ -13,6 +13,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+//
 public class fareprice extends AppCompatActivity {
     ArrayList<String> fare_places = new ArrayList<String>();
 
